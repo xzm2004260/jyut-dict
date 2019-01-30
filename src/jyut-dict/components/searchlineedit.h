@@ -10,6 +10,8 @@
 #include <QKeyEvent>
 #include <QLineEdit>
 
+// The SearchLineEdit is the main search bar
+
 class SearchLineEdit : public QLineEdit, public ISearchLineEdit
 {
     Q_OBJECT
@@ -18,7 +20,7 @@ public:
     explicit SearchLineEdit(ISearchOptionsMediator *mediator, QWidget *parent = nullptr);
     ~SearchLineEdit() override;
 
-    void keyReleaseEvent(QKeyEvent *event) override;
+    void keyPressEvent(QKeyEvent *event) override;
     void focusInEvent(QFocusEvent *event) override;
     void focusOutEvent(QFocusEvent *event) override;
 

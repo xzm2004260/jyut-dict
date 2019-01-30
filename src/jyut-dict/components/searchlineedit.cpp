@@ -4,11 +4,8 @@
 
 #include <QIcon>
 
-#include <cstdlib>
 #include <iostream>
 #include <vector>
-
-#include <QDebug>
 
 SearchLineEdit::SearchLineEdit(ISearchOptionsMediator *mediator, QWidget *parent)
     : QLineEdit(parent)
@@ -30,6 +27,7 @@ SearchLineEdit::SearchLineEdit(ISearchOptionsMediator *mediator, QWidget *parent
                 removeAction(_clearLineEdit);
                 _search->searchEnglish(text());});
 
+    // Customize the look of the searchbar to fit in better with platform styles
 #ifdef __APPLE__
     if (!system("defaults read -g AppleInterfaceStyle")) {
         setStyleSheet("QLineEdit { \
@@ -84,17 +82,21 @@ SearchLineEdit::SearchLineEdit(ISearchOptionsMediator *mediator, QWidget *parent
     _search = new SQLSearch();
 }
 
-void SearchLineEdit::keyReleaseEvent(QKeyEvent *event)
+// Search on every keypress
+// In addition, handle the custom clear button; if text edit is empty,
+// do not show the clear button!
+void SearchLineEdit::keyPressEvent(QKeyEvent *event)
 {
     if (text().isEmpty()) {
         removeAction(_clearLineEdit);
     } else {
         addAction(_clearLineEdit, QLineEdit::TrailingPosition);
     }
-    event->accept();
+    QLineEdit::keyPressEvent(event);
     search();
 }
 
+// When in focus and text present, the clear button should be visible
 void SearchLineEdit::focusInEvent(QFocusEvent *event)
 {
     if (text().isEmpty()) {
@@ -105,6 +107,7 @@ void SearchLineEdit::focusInEvent(QFocusEvent *event)
     QLineEdit::focusInEvent(event);
 }
 
+// When out of focus, the clear button should never be visible.
 void SearchLineEdit::focusOutEvent(QFocusEvent *event)
 {
     removeAction(_clearLineEdit);
